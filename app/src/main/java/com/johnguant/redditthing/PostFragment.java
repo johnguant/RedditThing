@@ -86,7 +86,7 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            adapter = new MyPostRecyclerViewAdapter(mValues, mListener, view.getContext(), new MyPostRecyclerViewAdapter.LoadMoreListener() {
+            adapter = new MyPostRecyclerViewAdapter(mValues, mListener, new MyPostRecyclerViewAdapter.LoadMoreListener() {
                 @Override
                 public void loadMore() {
                     loadContent(mValues.get(mValues.size()-1));

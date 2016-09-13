@@ -25,7 +25,7 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
     private final OnListFragmentInteractionListener mListener;
     LoadMoreListener more;
 
-    public MyPostRecyclerViewAdapter(List<Post> values, OnListFragmentInteractionListener listener, Context ctx, LoadMoreListener more) {
+    public MyPostRecyclerViewAdapter(List<Post> values, OnListFragmentInteractionListener listener, LoadMoreListener more) {
         mListener = listener;
         mValues = values;
         this.more = more;
