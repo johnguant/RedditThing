@@ -2,19 +2,75 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal">
+    <com.android.volley.toolbox.NetworkImageView android:id="@+id/preview"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:layout_marginRight="6dp" android:layout_marginEnd="6dp"
+        android:contentDescription="@string/previewImage" />
+    <LinearLayout android:orientation="vertical" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            tools:text="Weekly Politics Discussion Thread, 09 September, 2016"
+            android:textAppearance="?attr/textAppearanceListItem" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                tools:text="9"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="13sp"
+                android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                tools:text="AutoModerator"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="13sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/link_flair_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Discussion"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="13sp" />
+            <TextView
+                android:id="@+id/subreddit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="newzealand"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="13sp" />
+            <TextView
+                android:id="@+id/domain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="self.newzealand"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
-
-    <TextView
-        android:id="@+id/content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
 </LinearLayout>

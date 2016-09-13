@@ -1,14 +1,14 @@
 package com.johnguant.redditthing;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.johnguant.redditthing.PostFragment.OnListFragmentInteractionListener;
 import com.johnguant.redditthing.dummy.DummyContent.DummyItem;
 
@@ -21,15 +21,14 @@ import java.util.List;
  */
 public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private List<Post> mValues;
     private final OnListFragmentInteractionListener mListener;
+    LoadMoreListener more;
 
-    public MyPostRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+    public MyPostRecyclerViewAdapter(List<Post> values, OnListFragmentInteractionListener listener, Context ctx, LoadMoreListener more) {
         mListener = listener;
-
-        //RequestQueue queue = Volley.newRequestQueue(this);
-        //String url = ""
+        mValues = values;
+        this.more = more;
     }
 
     @Override
@@ -41,11 +40,23 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Log.d("redditThing", "hi");
+        if(position == getItemCount() - 5){
+            more.loadMore();
+        }
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
-
+        holder.mTitleView.setText(mValues.get(position).title);
+        holder.mAuthorView.setText(mValues.get(position).author);
+        holder.mScoreView.setText(String.format( "%d", mValues.get(position).score));
+        holder.mLinkFlairTextView.setText(mValues.get(position).linkFlairText);
+        holder.mSubredditView.setText(mValues.get(position).subreddit);
+        holder.mDomainView.setText(mValues.get(position).domain);
+        if(!mValues.get(position).previewImage.equals("self") && !mValues.get(position).previewImage.equals("default") && !mValues.get(position).previewImage.equals("nsfw")) {
+            ImageLoader mImageLoader = VolleyQueue.getInstance(holder.mView.getContext()).getImageLoader();
+            holder.mThumbnailView.setImageUrl(mValues.get(position).previewImage, mImageLoader);
+            holder.mThumbnailView.setVisibility(View.VISIBLE);
+        } else {
+            holder.mThumbnailView.setVisibility(View.GONE);
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,22 +74,36 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
         return mValues.size();
     }
 
+    public interface LoadMoreListener {
+        void loadMore();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView mTitleView;
+        public final TextView mAuthorView;
+        public final TextView mScoreView;
+        public final TextView mLinkFlairTextView;
+        public final TextView mSubredditView;
+        public final TextView mDomainView;
+        public final NetworkImageView mThumbnailView;
+        public Post mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mTitleView = (TextView) view.findViewById(R.id.title);
+            mAuthorView = (TextView) view.findViewById(R.id.author);
+            mScoreView = (TextView) view.findViewById(R.id.score);
+            mLinkFlairTextView = (TextView) view.findViewById(R.id.link_flair_text);
+            mSubredditView = (TextView) view.findViewById(R.id.subreddit);
+            mDomainView = (TextView) view.findViewById(R.id.domain);
+            mThumbnailView = (NetworkImageView) view.findViewById(R.id.preview);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mTitleView.getText() + "'";
         }
     }
 }

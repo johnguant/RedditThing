@@ -18,6 +18,8 @@ import android.view.View;
 
 import com.johnguant.redditthing.dummy.DummyContent;
 
+import org.json.JSONObject;
+
 public class RedditThing extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks, PostFragment.OnListFragmentInteractionListener {
 
@@ -124,7 +126,7 @@ public class RedditThing extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(Post item) {
 
     }
 }
