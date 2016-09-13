@@ -6,4 +6,10 @@
 
     <string name="action_settings">Settings</string>
     <string name="previewImage">previewImage</string>
+    <string name="accountLabel">Reddit Thing</string>
+    <string name="title_account_settings">Some Settings</string>
+    <string name="key1_action">Temp key 1</string>
+    <string name="key1_summary">A key that will soon change</string>
+    <string name="title_activity_temp">temp</string>
+    <string name="login_title">Login to Reddit</string>
 </resources>
