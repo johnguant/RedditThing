@@ -1,21 +1,29 @@
 package com.johnguant.redditthing;
 
+import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RedditAuthActivity extends AppCompatActivity {
 
@@ -45,10 +53,23 @@ public class RedditAuthActivity extends AppCompatActivity {
                     String authCode = uri.getQueryParameter("code");
                     authComplete = true;
                     String codeUrl = "https://www.reddit.com/api/v1/access_token";
-                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, codeUrl, null, new Response.Listener<JSONObject>() {
+                    final JSONObject data = new JSONObject();
+                    try {
+                        data.put("grant_type", "authorization_code");
+                        data.put("code", authCode);
+                        data.put("redirect_uri", "com.johnguant.redditthing://oauth2redirect");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, codeUrl, data, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-
+                            try {
+                                String accessToken = response.getString("access_token");
+                                String refreshToken = response.getString("refresh_token");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }, new Response.ErrorListener() {
 
@@ -56,7 +77,20 @@ public class RedditAuthActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError error) {
 
                         }
-                    });
+                    }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> headers = super.getHeaders();
+                            try {
+                                byte[] loginData = "3_XCTkayxEPJuA:".getBytes("UTF-8");
+                                String base64 = Base64.encodeToString(loginData, Base64.NO_WRAP);
+                                headers.put("Authorization", "Basic " + base64);
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            return headers;
+                        }
+                    };
 
 
                 }
