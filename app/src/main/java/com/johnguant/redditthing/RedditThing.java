@@ -1,6 +1,8 @@
 package com.johnguant.redditthing;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -121,6 +123,9 @@ public class RedditThing extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(Post item) {
-
+        Log.d("redditThing", item.url);
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(this, Uri.parse(item.url.replace("&amp;", "&")));
     }
 }

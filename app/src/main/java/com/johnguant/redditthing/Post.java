@@ -14,6 +14,7 @@ public class Post {
     String previewImage;
     String kind;
     String id;
+    String url;
 
     Post (JSONObject post){
         try {
@@ -26,6 +27,7 @@ public class Post {
             previewImage = post.getJSONObject("data").getString("thumbnail");
             kind = post.getString("kind");
             id  = post.getJSONObject("data").getString("id");
+            url  = post.getJSONObject("data").getString("url");
         } catch (JSONException e) {
             e.printStackTrace();
         }
