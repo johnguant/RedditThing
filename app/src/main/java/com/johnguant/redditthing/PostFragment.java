@@ -128,9 +128,9 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         String url;
 
         if(lastPost == null){
-            url = "https://www.reddit.com/r/newzealand/.json";
+            url = "https://www.reddit.com/.json";
         } else {
-            url = "https://www.reddit.com/r/newzealand/.json?after=" + lastPost.kind + "_" + lastPost.id;
+            url = "https://www.reddit.com/.json?after=" + lastPost.kind + "_" + lastPost.id;
         }
 
 
