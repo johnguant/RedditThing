@@ -12,4 +12,5 @@
     <string name="key1_summary">A key that will soon change</string>
     <string name="title_activity_temp">temp</string>
     <string name="login_title">Login to Reddit</string>
+    <string name="account_type">com.johnguant.redditthing</string>
 </resources>
