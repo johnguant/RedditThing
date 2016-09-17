@@ -21,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.johnguant.redditthing.RedditApi.RedditRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,20 +74,24 @@ public class RedditAuthActivity extends AppCompatActivity {
                     final String authCode = uri.getQueryParameter("code");
                     authComplete = true;
                     String codeUrl = "https://www.reddit.com/api/v1/access_token";
-                    StringRequest stringRequest = new StringRequest(Request.Method.POST, codeUrl, new Response.Listener<String>() {
+                    Map<String, String> data = new HashMap<>();
+                    data.put("grant_type", "authorization_code");
+                    data.put("code", authCode);
+                    data.put("redirect_uri", "com.johnguant.redditthing://oauth2redirect");
+                    final RedditRequest redditRequest = new RedditRequest(Request.Method.POST, codeUrl,
+                            data, new Response.Listener<JSONObject>() {
                         @Override
-                        public void onResponse(String response) {
+                        public void onResponse(JSONObject response) {
                             try {
-                                JSONObject jsonResponse = new JSONObject(response);
-                                accessToken = jsonResponse.getString("access_token");
-                                refreshToken = jsonResponse.getString("refresh_token");
+                                accessToken = response.getString("access_token");
+                                refreshToken = response.getString("refresh_token");
                                 Log.d("redditThing", "hi");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
-                            String userUrl = "https://oauth.reddit.com//api/v1/me";
-                            JsonObjectRequest userRequest = new JsonObjectRequest(Request.Method.GET, userUrl, null, new Response.Listener<JSONObject>() {
+                            String userUrl = "https://oauth.reddit.com/api/v1/me";
+                            RedditRequest userRequest = new RedditRequest(Request.Method.GET, userUrl, null, new Response.Listener<JSONObject>() {
 
                                 @Override
                                 public void onResponse(JSONObject response) {
@@ -113,16 +118,8 @@ public class RedditAuthActivity extends AppCompatActivity {
                                     Log.e("redditThing", "It borked");
                                     finish();
                                 }
-                            }) {
-                                @Override
-                                public Map<String, String> getHeaders() {
-                                    Map<String, String> headers = new HashMap<>();
-                                    headers.put("Content-Type", "application/x-www-form-urlencoded");
-                                    headers.put("User-agent", "android:com.johnguant.redditthing:v0.0.1 (by /u/john_guant)");
-                                    headers.put("Authorization", "bearer " + accessToken);
-                                    return headers;
-                                }
-                            };
+                            });
+                            userRequest.addHeader("Authorization", "bearer " + accessToken);
                             VolleyQueue.getInstance(getApplicationContext()).addToRequestQueue(userRequest);
                         }
                     }, new Response.ErrorListener() {
@@ -132,33 +129,16 @@ public class RedditAuthActivity extends AppCompatActivity {
                             Log.e("redditThing", "It borked");
                             finish();
                         }
-                    }) {
-                        @Override
-                        public Map<String, String> getHeaders() {
-                            Map<String, String> headers = new HashMap<>();
-                            try {
-                                byte[] loginData = "3_XCTkayxEPJuA:".getBytes("UTF-8");
-                                String base64 = Base64.encodeToString(loginData, Base64.NO_WRAP);
-                                //headers.put("Content-Type", "application/x-www-form-urlencoded");
-                                headers.put("User-agent", "android:com.johnguant.redditthing:v0.0.1 (by /u/john_guant)");
-                                headers.put("Authorization", "Basic " + base64);
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
-                            }
-                            return headers;
-                        }
-
-                        @Override
-                        public Map<String, String> getParams() {
-                            Map<String, String> params = new HashMap<>();
-                            params.put("grant_type", "authorization_code");
-                            params.put("code", authCode);
-                            params.put("redirect_uri", "com.johnguant.redditthing://oauth2redirect");
-                            return params;
-                        }
-                    };
-
-                    VolleyQueue.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+                    });
+                    try {
+                        byte[] loginData = "3_XCTkayxEPJuA:".getBytes("UTF-8");
+                        String base64 = Base64.encodeToString(loginData, Base64.NO_WRAP);
+                        redditRequest.addHeader("User-agent", "android:com.johnguant.redditthing:v0.0.1 (by /u/john_guant)");
+                        redditRequest.addHeader("Authorization", "Basic " + base64);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    VolleyQueue.getInstance(getApplicationContext()).addToRequestQueue(redditRequest);
                 }
             }
         });
