@@ -48,17 +48,20 @@ public class RedditAuthenticator extends AbstractAccountAuthenticator{
         String authToken = am.peekAuthToken(account, authTokenType);
 
         if(!TextUtils.isEmpty(authToken)){
-            final Bundle result = new Bundle();
-            result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
-            result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
-            result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
-            return result;
+            String expiration = am.getUserData(account, "expiryTime");
+            if(System.currentTimeMillis() > Long.valueOf(expiration)); {
+                long time = System.currentTimeMillis();
+                OAuthToken token = RedditAuthManager.getInstance(context).getNewAuthToken(account, am);
+                am.setAuthToken(account, authTokenType, token.access_token);
+                am.setUserData(account, "expiryTime", String.valueOf(time + (token.expiresIn*1000)));
+                authToken = token.access_token;
+            }
         }
 
-        final Intent intent = new Intent(context, RedditAuthActivity.class);
-        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
         final Bundle result = new Bundle();
-        bundle.putParcelable(AccountManager.KEY_INTENT, intent);
+        result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
+        result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
+        result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
         return result;
     }
 
