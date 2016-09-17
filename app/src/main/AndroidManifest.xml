@@ -22,11 +22,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RedditAuthActivity"
+            android:name=".Auth.RedditAuthActivity"
             android:label="@string/login_title"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <service android:name=".RedditAccountService">
+        <service android:name=".Auth.RedditAccountService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>

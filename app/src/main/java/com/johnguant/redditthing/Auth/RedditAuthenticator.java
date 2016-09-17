@@ -1,8 +1,7 @@
-package com.johnguant.redditthing;
+package com.johnguant.redditthing.Auth;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
-import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.accounts.NetworkErrorException;
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 public class RedditAuthenticator extends AbstractAccountAuthenticator{
 
