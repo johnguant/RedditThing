@@ -33,8 +33,7 @@
                 android:layout_marginStart="10dp"
                 tools:text="9"
                 android:textAppearance="?attr/textAppearanceListItem"
-                android:textSize="13sp"
-                android:layout_marginTop="10dp"/>
+                android:textSize="13sp" />
             <TextView
                 android:id="@+id/author"
                 android:layout_width="wrap_content"
