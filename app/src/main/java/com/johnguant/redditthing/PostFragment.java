@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.johnguant.redditthing.RedditApi.RedditRequest;
 
 import org.json.JSONArray;

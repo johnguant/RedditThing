@@ -47,16 +47,12 @@ public class RedditAuthenticator extends AbstractAccountAuthenticator{
 
         String authToken = am.peekAuthToken(account, authTokenType);
 
-        if(!TextUtils.isEmpty(authToken)){
-            String expiration = am.getUserData(account, "expiryTime");
-            if(System.currentTimeMillis() > Long.valueOf(expiration)){
-                am.invalidateAuthToken(account.type, authToken);
-                long time = System.currentTimeMillis();
-                OAuthToken token = RedditAuthManager.getInstance(context).getNewAuthToken(account, am);
-                am.setAuthToken(account, authTokenType, token.access_token);
-                am.setUserData(account, "expiryTime", String.valueOf(time + (token.expiresIn*1000)));
-                authToken = token.access_token;
-            }
+        if(TextUtils.isEmpty(authToken)){
+            long time = System.currentTimeMillis();
+            OAuthToken token = RedditAuthManager.getInstance(context).getNewAuthToken(account, am);
+            am.setAuthToken(account, authTokenType, token.access_token);
+            am.setUserData(account, "expiryTime", String.valueOf(time + (token.expiresIn*1000)));
+            authToken = token.access_token;
         }
 
         final Bundle result = new Bundle();
