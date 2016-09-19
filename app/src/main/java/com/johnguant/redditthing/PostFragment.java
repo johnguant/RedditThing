@@ -1,6 +1,7 @@
 package com.johnguant.redditthing;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,6 +17,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.johnguant.redditthing.RedditApi.RedditRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -124,42 +126,47 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void loadContent(Post lastPost){
         refreshLayout.setRefreshing(true);
-
-        String url;
-
-        if(lastPost == null){
-            url = "https://www.reddit.com/.json";
-        } else {
-            url = "https://www.reddit.com/.json?after=" + lastPost.kind + "_" + lastPost.id;
-        }
-
-
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        new AsyncTask<Post, Void, Void>(){
 
             @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONArray posts =  response.getJSONObject("data").getJSONArray("children");
-                    for(int i = 0; i<posts.length(); i++){
-                        Post p = new Post(posts.getJSONObject(i));
-                        mValues.add(p);
-                    }
-                    adapter.notifyDataSetChanged();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            protected Void doInBackground(Post... lastPost) {
+                String url;
+                if(lastPost[0] == null){
+                    url = "https://oauth.reddit.com/.json";
+                } else {
+                    url = "https://oauth.reddit.com/.json?after=" + lastPost[0].kind + "_" + lastPost[0].id;
                 }
-                refreshLayout.setRefreshing(false);
-            }
-        }, new Response.ErrorListener() {
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                refreshLayout.setRefreshing(false);
-            }
-        });
 
-        VolleyQueue.getInstance(getActivity()).addToRequestQueue(jsObjRequest);
+                RedditRequest redditRequest = new RedditRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray posts =  response.getJSONObject("data").getJSONArray("children");
+                            for(int i = 0; i<posts.length(); i++){
+                                Post p = new Post(posts.getJSONObject(i));
+                                mValues.add(p);
+                            }
+                            adapter.notifyDataSetChanged();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        refreshLayout.setRefreshing(false);
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        refreshLayout.setRefreshing(false);
+                    }
+                }, getContext());
+
+                VolleyQueue.getInstance(getActivity()).addToRequestQueue(redditRequest);
+                return null;
+            }
+        }.execute(lastPost);
     }
 
     @Override

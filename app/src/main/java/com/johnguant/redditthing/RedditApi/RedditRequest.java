@@ -1,10 +1,13 @@
 package com.johnguant.redditthing.RedditApi;
 
+import android.content.Context;
+
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.johnguant.redditthing.Auth.RedditAuthManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +29,13 @@ public class RedditRequest extends Request<JSONObject>{
         mParams = params;
         headers = new HashMap<>();
         headers.put("User-Agent", "android:com.johnguant.redditthing:v0.0.1 (by /u/john_guant)");
+    }
+
+    public RedditRequest(int method, String url,
+                         Response.Listener<JSONObject> listener,
+                         Response.ErrorListener errorListener, Context context) {
+        this(method, url, null, listener, errorListener);
+        headers.put("Authorization", "bearer " + RedditAuthManager.getInstance(context).getAccessToken());
     }
 
     @Override

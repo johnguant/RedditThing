@@ -1,28 +1,22 @@
 package com.johnguant.redditthing.Auth;
 
 import android.accounts.Account;
-import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
-import com.android.volley.toolbox.StringRequest;
 import com.johnguant.redditthing.R;
 import com.johnguant.redditthing.RedditApi.RedditRequest;
 import com.johnguant.redditthing.VolleyQueue;
@@ -134,7 +128,7 @@ public class RedditAuthActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         VolleyQueue.getInstance(getApplicationContext()).addToRequestQueue(redditRequest);
-        JSONObject response = null;
+        JSONObject response;
         try {
             response = future.get(10, TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
