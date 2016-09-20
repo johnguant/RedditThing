@@ -26,7 +26,7 @@
         android:id="@+id/login_webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Auth.RedditAuthActivity"
+        tools:context=".auth.RedditAuthActivity"
         android:layout_below="@+id/toolbar"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 

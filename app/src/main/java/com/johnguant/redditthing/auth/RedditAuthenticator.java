@@ -1,4 +1,4 @@
-package com.johnguant.redditthing.Auth;
+package com.johnguant.redditthing.auth;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;

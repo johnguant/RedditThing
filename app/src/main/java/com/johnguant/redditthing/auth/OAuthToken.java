@@ -1,4 +1,4 @@
-package com.johnguant.redditthing.Auth;
+package com.johnguant.redditthing.auth;
 
 public class OAuthToken {
     String access_token;

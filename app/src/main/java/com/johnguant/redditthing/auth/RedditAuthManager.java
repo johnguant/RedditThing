@@ -1,4 +1,4 @@
-package com.johnguant.redditthing.Auth;
+package com.johnguant.redditthing.auth;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -13,7 +13,7 @@ import android.util.Base64;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.RequestFuture;
-import com.johnguant.redditthing.RedditApi.RedditRequest;
+import com.johnguant.redditthing.redditapi.RedditRequest;
 import com.johnguant.redditthing.VolleyQueue;
 
 import org.json.JSONException;
@@ -31,14 +31,15 @@ import java.util.concurrent.TimeoutException;
 public class RedditAuthManager {
 
     static RedditAuthManager mInstance;
-    static Context context;
+    private Context context;
 
-    RedditAuthManager(Context ctx){
+    RedditAuthManager(Context ctx) {
         context = ctx;
     }
 
-    public String getAccessToken(){
+    public String getAccessToken() {
         AccountManager am = AccountManager.get(context);
+        @SuppressWarnings("MissingPermission")
         Account[] accounts = am.getAccountsByType("com.johnguant.redditthing");
         if(accounts.length > 0){
             AccountManagerFuture<Bundle> accountFuture = am.getAuthToken(accounts[0], "accessToken", null, false, null, null);

@@ -11,6 +11,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.johnguant.redditthing.PostFragment.OnListFragmentInteractionListener;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Post} and makes a call to the
@@ -44,7 +45,7 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
         holder.mItem = mValues.get(position);
         holder.mTitleView.setText(mValues.get(position).title);
         holder.mAuthorView.setText(mValues.get(position).author);
-        holder.mScoreView.setText(String.format( "%d", mValues.get(position).score));
+        holder.mScoreView.setText(String.format(Locale.ENGLISH ,"%d", mValues.get(position).score));
         holder.mLinkFlairTextView.setText(mValues.get(position).linkFlairText);
         holder.mSubredditView.setText(mValues.get(position).subreddit);
         holder.mDomainView.setText(mValues.get(position).domain);

@@ -1,4 +1,4 @@
-package com.johnguant.redditthing.Auth;
+package com.johnguant.redditthing.auth;
 
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
@@ -18,7 +18,7 @@ import android.webkit.WebViewClient;
 import com.android.volley.Request;
 import com.android.volley.toolbox.RequestFuture;
 import com.johnguant.redditthing.R;
-import com.johnguant.redditthing.RedditApi.RedditRequest;
+import com.johnguant.redditthing.redditapi.RedditRequest;
 import com.johnguant.redditthing.VolleyQueue;
 
 import org.json.JSONException;

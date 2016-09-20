@@ -1,4 +1,4 @@
-package com.johnguant.redditthing.RedditApi;
+package com.johnguant.redditthing.redditapi;
 
 import android.accounts.AccountManager;
 import android.content.Context;
@@ -10,7 +10,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.johnguant.redditthing.Auth.RedditAuthManager;
+import com.johnguant.redditthing.auth.RedditAuthManager;
 import com.johnguant.redditthing.VolleyQueue;
 
 import org.json.JSONException;
