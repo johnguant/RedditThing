@@ -10,26 +10,24 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.android.volley.Request;
-import com.android.volley.toolbox.RequestFuture;
 import com.johnguant.redditthing.R;
-import com.johnguant.redditthing.redditapi.RedditRequest;
-import com.johnguant.redditthing.VolleyQueue;
+import com.johnguant.redditthing.redditapi.AuthInterceptor;
+import com.johnguant.redditthing.redditapi.AuthService;
+import com.johnguant.redditthing.redditapi.HeaderInterceptor;
+import com.johnguant.redditthing.redditapi.RedditApiService;
+import com.johnguant.redditthing.redditapi.ServiceGenerator;
+import com.johnguant.redditthing.redditapi.model.OAuthToken;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.IOException;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RedditAuthActivity extends AppCompatActivity {
 
@@ -78,13 +76,13 @@ public class RedditAuthActivity extends AppCompatActivity {
                             String username = getUsername(oAuthToken);
                             final Account account = new Account(username, getString(R.string.account_type));
                             mAccountManager.addAccountExplicitly(account, "", null);
-                            mAccountManager.setAuthToken(account, "accessToken", oAuthToken.access_token);
-                            mAccountManager.setUserData(account, "refreshToken", oAuthToken.refresh_token);
-                            mAccountManager.setUserData(account, "expiryTime", String.valueOf(time + (oAuthToken.expiresIn*1000)));
+                            mAccountManager.setAuthToken(account, "accessToken", oAuthToken.getAccessToken());
+                            mAccountManager.setUserData(account, "refreshToken", oAuthToken.getRefreshToken());
+                            mAccountManager.setUserData(account, "expiryTime", String.valueOf(time + (oAuthToken.getExpiresIn()*1000)));
                             final Intent intent = new Intent();
                             intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, username);
                             intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.account_type));
-                            intent.putExtra(AccountManager.KEY_AUTHTOKEN, oAuthToken.access_token);
+                            intent.putExtra(AccountManager.KEY_AUTHTOKEN, oAuthToken.getAccessToken());
 
                             mResultBundle = result.getExtras();
                             finish();
@@ -98,56 +96,37 @@ public class RedditAuthActivity extends AppCompatActivity {
     }
 
     public String getUsername(OAuthToken oAuthToken){
-        String userUrl = "https://oauth.reddit.com/api/v1/me";
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        RedditRequest redditRequest = new RedditRequest(Request.Method.GET, userUrl, null, future, future);
-        redditRequest.addHeader("Authorization", "bearer " + oAuthToken.access_token);
-        VolleyQueue.getInstance(getApplicationContext()).addToRequestQueue(redditRequest);
+        final String BASE_URL = "https://oauth.reddit.com/";
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new HeaderInterceptor())
+                .addInterceptor(new AuthInterceptor(oAuthToken.getAccessToken()));
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create());
+        builder.client(httpClient.build());
+        Retrofit retrofit = builder.build();
+        RedditApiService service = retrofit.create(RedditApiService.class);
+        Call<com.johnguant.redditthing.redditapi.model.Account> call = service.getMe();
+        com.johnguant.redditthing.redditapi.model.Account account;
         try {
-            JSONObject response = future.get(10, TimeUnit.SECONDS);
-            return response.getString("name");
-        } catch (InterruptedException | ExecutionException | TimeoutException | JSONException e) {
+            account = call.execute().body();
+        } catch (IOException e) {
             return null;
         }
+        return account.getName();
     }
 
     public OAuthToken getAccessTokenFromCode(String code){
-        String codeUrl = "https://www.reddit.com/api/v1/access_token";
-        Map<String, String> data = new HashMap<>();
-        data.put("grant_type", "authorization_code");
-        data.put("code", code);
-        data.put("redirect_uri", "com.johnguant.redditthing://oauth2redirect");
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        final RedditRequest redditRequest = new RedditRequest(Request.Method.POST, codeUrl,
-                data, future, future);
+        AuthService service = ServiceGenerator.createService(AuthService.class, getApplicationContext());
+        Call<OAuthToken> call = service.accessToken("authorization_code", code, "com.johnguant.redditthing://oauth2redirect");
+        OAuthToken token;
         try {
-            byte[] loginData = "3_XCTkayxEPJuA:".getBytes("UTF-8");
-            String base64 = Base64.encodeToString(loginData, Base64.NO_WRAP);
-            redditRequest.addHeader("Authorization", "Basic " + base64);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        VolleyQueue.getInstance(getApplicationContext()).addToRequestQueue(redditRequest);
-        JSONObject response;
-        try {
-            response = future.get(10, TimeUnit.SECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            token = call.execute().body();
+        } catch (IOException e) {
             return null;
         }
-
-        OAuthToken token = null;
-
-        if(response != null) {
-            try {
-                String accessToken = response.getString("access_token");
-                String refreshToken = response.getString("refresh_token");
-                int expiresIn = response.getInt("expires_in");
-                token = new OAuthToken(accessToken, refreshToken, expiresIn);
-            } catch (JSONException e) {
-                Log.d("redditThing", "Getting access or refresh token from json failed");
-            }
-        }
         return token;
+
     }
 
     public void finish() {

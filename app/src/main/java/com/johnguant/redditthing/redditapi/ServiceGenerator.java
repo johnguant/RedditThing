@@ -1,0 +1,43 @@
+package com.johnguant.redditthing.redditapi;
+
+import android.content.Context;
+
+import com.google.gson.GsonBuilder;
+import com.johnguant.redditthing.redditapi.model.Thing;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class ServiceGenerator {
+
+    private static final String BASE_URL = "https://oauth.reddit.com/";
+
+    private static GsonBuilder gson = new GsonBuilder()
+            .registerTypeAdapter(Thing.class, new ThingDeserializer());
+
+    private static Retrofit.Builder builder = new Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson.create()));
+
+    private static HttpLoggingInterceptor logging = new HttpLoggingInterceptor()
+            .setLevel(HttpLoggingInterceptor.Level.BODY);
+
+    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .addInterceptor(new HeaderInterceptor());
+
+    private static boolean addedAuth = false;
+
+    public static <S> S createService(Class<S> serviceClass, Context context){
+        if(!addedAuth) {
+            httpClient.addInterceptor(new AuthInterceptor(context));
+            addedAuth = true;
+        }
+        httpClient.authenticator(new OAuthAuthenticator(context));
+        builder.client(httpClient.build());
+        Retrofit retrofit = builder.build();
+        return retrofit.create(serviceClass);
+    }
+}

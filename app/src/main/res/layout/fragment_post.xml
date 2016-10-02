@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal">
-    <com.android.volley.toolbox.NetworkImageView android:id="@+id/preview"
+    <ImageView android:id="@+id/preview"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:paddingLeft="10dp"

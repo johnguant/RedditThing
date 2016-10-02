@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.johnguant.redditthing.redditapi.model.OAuthToken;
+
 public class RedditAuthenticator extends AbstractAccountAuthenticator{
 
     private Context context;
@@ -50,9 +52,9 @@ public class RedditAuthenticator extends AbstractAccountAuthenticator{
         if(TextUtils.isEmpty(authToken)){
             long time = System.currentTimeMillis();
             OAuthToken token = RedditAuthManager.getInstance(context).getNewAuthToken(account, am);
-            am.setAuthToken(account, authTokenType, token.access_token);
-            am.setUserData(account, "expiryTime", String.valueOf(time + (token.expiresIn*1000)));
-            authToken = token.access_token;
+            am.setAuthToken(account, authTokenType, token.getAccessToken());
+            am.setUserData(account, "expiryTime", String.valueOf(time + (token.getExpiresIn()*1000)));
+            authToken = token.getAccessToken();
         }
 
         final Bundle result = new Bundle();

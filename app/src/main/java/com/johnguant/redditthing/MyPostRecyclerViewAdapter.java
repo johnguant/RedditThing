@@ -1,33 +1,37 @@
 package com.johnguant.redditthing;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.johnguant.redditthing.PostFragment.OnListFragmentInteractionListener;
+import com.johnguant.redditthing.redditapi.model.Link;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Locale;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Post} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Link} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecyclerViewAdapter.ViewHolder> {
 
-    private List<Post> mValues;
+    private List<Link> mValues;
     private final OnListFragmentInteractionListener mListener;
     LoadMoreListener more;
+    Context mContext;
 
-    public MyPostRecyclerViewAdapter(List<Post> values, OnListFragmentInteractionListener listener, LoadMoreListener more) {
+    public MyPostRecyclerViewAdapter(List<Link> values, OnListFragmentInteractionListener listener, LoadMoreListener more, Context context) {
         mListener = listener;
         mValues = values;
         this.more = more;
+        mContext = context;
     }
 
     @Override
@@ -43,15 +47,14 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
             more.loadMore();
         }
         holder.mItem = mValues.get(position);
-        holder.mTitleView.setText(mValues.get(position).title);
-        holder.mAuthorView.setText(mValues.get(position).author);
-        holder.mScoreView.setText(String.format(Locale.ENGLISH ,"%d", mValues.get(position).score));
-        holder.mLinkFlairTextView.setText(mValues.get(position).linkFlairText);
-        holder.mSubredditView.setText(mValues.get(position).subreddit);
-        holder.mDomainView.setText(mValues.get(position).domain);
-        if(!mValues.get(position).previewImage.equals("self") && !mValues.get(position).previewImage.equals("default") && !mValues.get(position).previewImage.equals("nsfw")) {
-            ImageLoader mImageLoader = VolleyQueue.getInstance(holder.mView.getContext()).getImageLoader();
-            holder.mThumbnailView.setImageUrl(mValues.get(position).previewImage, mImageLoader);
+        holder.mTitleView.setText(mValues.get(position).getTitle());
+        holder.mAuthorView.setText(mValues.get(position).getAuthor());
+        holder.mScoreView.setText(String.format(Locale.ENGLISH ,"%d", mValues.get(position).getScore()));
+        holder.mLinkFlairTextView.setText(mValues.get(position).getLinkFlairText());
+        holder.mSubredditView.setText(mValues.get(position).getSubreddit());
+        holder.mDomainView.setText(mValues.get(position).getDomain());
+        if(!mValues.get(position).getThumbnail().equals("self") && !mValues.get(position).getThumbnail().equals("default") && !mValues.get(position).getThumbnail().equals("nsfw")) {
+            Picasso.with(mContext).load(mValues.get(position).getThumbnail()).into(holder.mThumbnailView);
             holder.mThumbnailView.setVisibility(View.VISIBLE);
         } else {
             holder.mThumbnailView.setVisibility(View.GONE);
@@ -85,8 +88,8 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
         public final TextView mLinkFlairTextView;
         public final TextView mSubredditView;
         public final TextView mDomainView;
-        public final NetworkImageView mThumbnailView;
-        public Post mItem;
+        public final ImageView mThumbnailView;
+        public Link mItem;
 
         public ViewHolder(View view) {
             super(view);
@@ -97,7 +100,7 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
             mLinkFlairTextView = (TextView) view.findViewById(R.id.link_flair_text);
             mSubredditView = (TextView) view.findViewById(R.id.subreddit);
             mDomainView = (TextView) view.findViewById(R.id.domain);
-            mThumbnailView = (NetworkImageView) view.findViewById(R.id.preview);
+            mThumbnailView = (ImageView) view.findViewById(R.id.preview);
         }
 
         @Override

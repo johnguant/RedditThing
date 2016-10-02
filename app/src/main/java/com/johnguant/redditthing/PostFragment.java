@@ -1,7 +1,6 @@
 package com.johnguant.redditthing;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,17 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.johnguant.redditthing.redditapi.RedditRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.johnguant.redditthing.redditapi.RedditApiService;
+import com.johnguant.redditthing.redditapi.ServiceGenerator;
+import com.johnguant.redditthing.redditapi.model.Link;
+import com.johnguant.redditthing.redditapi.model.Listing;
+import com.johnguant.redditthing.redditapi.model.Thing;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * A fragment representing a list of Items.
@@ -38,7 +37,7 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-    private List<Post> mValues;
+    private List<Link> mValues;
     private MyPostRecyclerViewAdapter adapter;
     private SwipeRefreshLayout refreshLayout;
 
@@ -92,7 +91,7 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 public void loadMore() {
                     loadContent(mValues.get(mValues.size()-1));
                 }
-            });
+            }, context);
             recyclerView.setAdapter(adapter);
             loadContent();
             Log.d("redditThing", "hello1");
@@ -123,17 +122,40 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         loadContent(null);
     }
 
-    public void loadContent(Post lastPost){
+    public void loadContent(final Link lastPost){
         refreshLayout.setRefreshing(true);
-        new AsyncTask<Post, Void, Void>(){
+        RedditApiService service = ServiceGenerator.createService(RedditApiService.class, getContext());
+        Call<Listing<Link>> call = service.loadFrontpage(lastPost);
+        call.enqueue(new Callback<Listing<Link>>() {
+            @Override
+            public void onResponse(Call<Listing<Link>> call, retrofit2.Response<Listing<Link>> response) {
+                if(response.isSuccessful()){
+                    if(lastPost == null){
+                        mValues.clear();
+                    }
+                    for(Thing<Link> c : response.body().getData().getChildren()){
+                        mValues.add(c.getData());
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+                refreshLayout.setRefreshing(false);
+            }
 
             @Override
-            protected Void doInBackground(Post... lastPost) {
+            public void onFailure(Call<Listing<Link>> call, Throwable t) {
+                Log.d("redditThing", "it no work");
+                refreshLayout.setRefreshing(false);
+            }
+        });
+        /*new AsyncTask<Link, Void, Void>(){
+
+            @Override
+            protected Void doInBackground(Link... lastLink) {
                 String url;
                 if(lastPost[0] == null){
-                    url = "https://oauth.reddit.com/.json";
+                    url = "https://oauth.reddit.com/";
                 } else {
-                    url = "https://oauth.reddit.com/.json?after=" + lastPost[0].kind + "_" + lastPost[0].id;
+                    url = "https://oauth.reddit.com/?after=" + lastPost[0].kind + "_" + lastPost[0].id;
                 }
 
 
@@ -144,7 +166,7 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         try {
                             JSONArray posts =  response.getJSONObject("data").getJSONArray("children");
                             for(int i = 0; i<posts.length(); i++){
-                                Post p = new Post(posts.getJSONObject(i));
+                                Link p = new Link(posts.getJSONObject(i));
                                 mValues.add(p);
                             }
                             adapter.notifyDataSetChanged();
@@ -165,7 +187,7 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 VolleyQueue.getInstance(getActivity()).addToRequestQueue(redditRequest);
                 return null;
             }
-        }.execute(lastPost);
+        }.execute(lastPost);*/
     }
 
     @Override
@@ -185,6 +207,6 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Post item);
+        void onListFragmentInteraction(Link link);
     }
 }

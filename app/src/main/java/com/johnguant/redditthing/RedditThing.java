@@ -3,9 +3,7 @@ package com.johnguant.redditthing;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
@@ -16,7 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+
+import com.johnguant.redditthing.redditapi.model.Link;
 
 public class RedditThing extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks, PostFragment.OnListFragmentInteractionListener {
@@ -113,10 +112,10 @@ public class RedditThing extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(Post item) {
-        Log.d("redditThing", item.url);
+    public void onListFragmentInteraction(Link link) {
+        Log.d("redditThing", link.getUrl());
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         CustomTabsIntent customTabsIntent = builder.build();
-        customTabsIntent.launchUrl(this, Uri.parse(item.url.replace("&amp;", "&")));
+        customTabsIntent.launchUrl(this, Uri.parse(link.getUrl()));
     }
 }
