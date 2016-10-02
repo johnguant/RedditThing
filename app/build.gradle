@@ -28,6 +28,10 @@ android {
     lintOptions {
         warning 'InvalidPackage'
     }
+
+    adbOptions {
+        timeOutInMs 300000 // 5 seconds in ms.
+    }
 }
 
 play {
