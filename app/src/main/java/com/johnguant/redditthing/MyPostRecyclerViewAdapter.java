@@ -2,6 +2,11 @@ package com.johnguant.redditthing;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,20 +51,41 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
         if(position == getItemCount() - 5){
             more.loadMore();
         }
-        holder.mItem = mValues.get(position);
-        holder.mTitleView.setText(mValues.get(position).getTitle());
-        holder.mAuthorView.setText(mValues.get(position).getAuthor());
-        holder.mScoreView.setText(String.format(Locale.ENGLISH ,"%d", mValues.get(position).getScore()));
-        holder.mLinkFlairTextView.setText(mValues.get(position).getLinkFlairText());
-        holder.mSubredditView.setText(mValues.get(position).getSubreddit());
-        holder.mDomainView.setText(mValues.get(position).getDomain());
-        if(mValues.get(position).getThumbnail().equals("self") || mValues.get(position).getThumbnail().equals("default") || mValues.get(position).getThumbnail().equals("nsfw")) {
+
+        Link link = mValues.get(position);
+
+        holder.mItem = link;
+        holder.mTitleView.setText(link.getTitle());
+
+        SpannableStringBuilder row1Builder = new SpannableStringBuilder();
+        SpannableString score = new SpannableString(String.format(Locale.ENGLISH ,"%dpts", link.getScore()));
+        row1Builder.append(score).append(" ");
+        SpannableString author = new SpannableString(link.getAuthor());
+        row1Builder.append(author);
+
+        holder.mRow1.setText(row1Builder, TextView.BufferType.SPANNABLE);
+
+        SpannableStringBuilder row2Builder = new SpannableStringBuilder();
+        if(!TextUtils.isEmpty(link.getLinkFlairText())) {
+            SpannableString flairText = new SpannableString(link.getLinkFlairText());
+            row2Builder.append(flairText).append(" ");
+        }
+        SpannableString subreddit = new SpannableString(link.getSubreddit());
+        row2Builder.append(subreddit).append(" ");
+        SpannableString domain = new SpannableString(link.getDomain());
+        row2Builder.append(domain).append(" ");
+        SpannableString created = new SpannableString(DateUtils.getRelativeTimeSpanString(link.getCreatedUtc()*1000, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE));
+        row2Builder.append(created);
+
+        holder.mRow2.setText(row2Builder, TextView.BufferType.SPANNABLE);
+
+        if(link.getThumbnail().equals("self") || link.getThumbnail().equals("default") || link.getThumbnail().equals("nsfw")) {
             holder.mThumbnailView.setVisibility(View.GONE);
-        } else if(mValues.get(position).getThumbnail().equals("image")) {
-            Picasso.with(mContext).load(mValues.get(position).getMedia().getOembed().getThumbnailUrl()).resizeDimen(R.dimen.thumbnail_size, R.dimen.thumbnail_size).centerCrop().into(holder.mThumbnailView);
+        } else if(link.getThumbnail().equals("image")) {
+            Picasso.with(mContext).load(link.getMedia().getOembed().getThumbnailUrl()).resizeDimen(R.dimen.thumbnail_size, R.dimen.thumbnail_size).centerCrop().into(holder.mThumbnailView);
             holder.mThumbnailView.setVisibility(View.VISIBLE);
         } else {
-            Picasso.with(mContext).load(mValues.get(position).getThumbnail()).resizeDimen(R.dimen.thumbnail_size, R.dimen.thumbnail_size).centerCrop().into(holder.mThumbnailView);
+            Picasso.with(mContext).load(link.getThumbnail()).resizeDimen(R.dimen.thumbnail_size, R.dimen.thumbnail_size).centerCrop().into(holder.mThumbnailView);
             holder.mThumbnailView.setVisibility(View.VISIBLE);
         }
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -86,11 +112,8 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mTitleView;
-        public final TextView mAuthorView;
-        public final TextView mScoreView;
-        public final TextView mLinkFlairTextView;
-        public final TextView mSubredditView;
-        public final TextView mDomainView;
+        public final TextView mRow1;
+        public final TextView mRow2;
         public final ImageView mThumbnailView;
         public Link mItem;
 
@@ -98,11 +121,8 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
             super(view);
             mView = view;
             mTitleView = (TextView) view.findViewById(R.id.title);
-            mAuthorView = (TextView) view.findViewById(R.id.author);
-            mScoreView = (TextView) view.findViewById(R.id.score);
-            mLinkFlairTextView = (TextView) view.findViewById(R.id.link_flair_text);
-            mSubredditView = (TextView) view.findViewById(R.id.subreddit);
-            mDomainView = (TextView) view.findViewById(R.id.domain);
+            mRow1 = (TextView) view.findViewById(R.id.link_row1);
+            mRow2 = (TextView) view.findViewById(R.id.link_row2);
             mThumbnailView = (ImageView) view.findViewById(R.id.preview);
         }
 

@@ -31,6 +31,8 @@ public class Link {
     private String distinguished;
     private boolean stickied;
     private String name;
+    private long created;
+    private long createdUtc;
 
     public String getName() {
         return name;
@@ -262,6 +264,30 @@ public class Link {
 
     public void setStickied(boolean stickied) {
         this.stickied = stickied;
+    }
+
+    public Object getMediaEmbed() {
+        return mediaEmbed;
+    }
+
+    public void setMediaEmbed(Object mediaEmbed) {
+        this.mediaEmbed = mediaEmbed;
+    }
+
+    public long getCreated() {
+        return created;
+    }
+
+    public void setCreated(long created) {
+        this.created = created;
+    }
+
+    public long getCreatedUtc() {
+        return createdUtc;
+    }
+
+    public void setCreatedUtc(long createdUtc) {
+        this.createdUtc = createdUtc;
     }
 
     public String toString() {
