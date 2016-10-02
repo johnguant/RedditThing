@@ -1,34 +1,34 @@
 package com.johnguant.redditthing.redditapi.model;
 
 public class OAuthToken {
-    private String access_token;
-    private String token_type;
-    private int expires_in;
+    private String accessToken;
+    private String tokenType;
+    private int expiresIn;
     private String scope;
     private String refresh_token;
 
     public String getAccessToken() {
-        return access_token;
+        return accessToken;
     }
 
     public void setAccessToken(String accessToken) {
-        this.access_token = accessToken;
+        this.accessToken = accessToken;
     }
 
     public String getTokenType() {
-        return token_type;
+        return tokenType;
     }
 
     public void setTokenType(String tokenType) {
-        this.token_type = tokenType;
+        this.tokenType = tokenType;
     }
 
     public int getExpiresIn() {
-        return expires_in;
+        return expiresIn;
     }
 
     public void setExpiresIn(int expiresIn) {
-        this.expires_in = expiresIn;
+        this.expiresIn = expiresIn;
     }
 
     public String getScope() {

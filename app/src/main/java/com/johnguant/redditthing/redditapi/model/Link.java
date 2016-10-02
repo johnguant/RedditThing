@@ -13,8 +13,8 @@ public class Link {
     private String linkFlairCssClass;
     private String linkFlairText;
     private boolean locked;
-    private Object media;
-    private Object media_embed;
+    private Media media;
+    private Object mediaEmbed;
     private int numComments;
     private boolean over18;
     private String permalink;
@@ -128,20 +128,20 @@ public class Link {
         this.locked = locked;
     }
 
-    public Object getMedia() {
+    public Media getMedia() {
         return media;
     }
 
-    public void setMedia(Object media) {
+    public void setMedia(Media media) {
         this.media = media;
     }
 
     public Object getMedia_embed() {
-        return media_embed;
+        return mediaEmbed;
     }
 
-    public void setMedia_embed(Object media_embed) {
-        this.media_embed = media_embed;
+    public void setMedia_embed(Object mediaEmbed) {
+        this.mediaEmbed = mediaEmbed;
     }
 
     public int getNumComments() {

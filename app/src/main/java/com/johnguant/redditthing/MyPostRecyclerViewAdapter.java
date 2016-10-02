@@ -53,11 +53,14 @@ public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecycl
         holder.mLinkFlairTextView.setText(mValues.get(position).getLinkFlairText());
         holder.mSubredditView.setText(mValues.get(position).getSubreddit());
         holder.mDomainView.setText(mValues.get(position).getDomain());
-        if(!mValues.get(position).getThumbnail().equals("self") && !mValues.get(position).getThumbnail().equals("default") && !mValues.get(position).getThumbnail().equals("nsfw")) {
-            Picasso.with(mContext).load(mValues.get(position).getThumbnail()).resizeDimen(R.dimen.thumbnail_size, R.dimen.thumbnail_size).centerCrop().into(holder.mThumbnailView);
+        if(mValues.get(position).getThumbnail().equals("self") || mValues.get(position).getThumbnail().equals("default") || mValues.get(position).getThumbnail().equals("nsfw")) {
+            holder.mThumbnailView.setVisibility(View.GONE);
+        } else if(mValues.get(position).getThumbnail().equals("image")) {
+            Picasso.with(mContext).load(mValues.get(position).getMedia().getOembed().getThumbnailUrl()).resizeDimen(R.dimen.thumbnail_size, R.dimen.thumbnail_size).centerCrop().into(holder.mThumbnailView);
             holder.mThumbnailView.setVisibility(View.VISIBLE);
         } else {
-            holder.mThumbnailView.setVisibility(View.GONE);
+            Picasso.with(mContext).load(mValues.get(position).getThumbnail()).resizeDimen(R.dimen.thumbnail_size, R.dimen.thumbnail_size).centerCrop().into(holder.mThumbnailView);
+            holder.mThumbnailView.setVisibility(View.VISIBLE);
         }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

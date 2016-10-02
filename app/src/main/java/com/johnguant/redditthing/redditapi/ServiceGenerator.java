@@ -2,6 +2,7 @@ package com.johnguant.redditthing.redditapi;
 
 import android.content.Context;
 
+import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.johnguant.redditthing.redditapi.model.Thing;
 
@@ -15,6 +16,7 @@ public class ServiceGenerator {
     private static final String BASE_URL = "https://oauth.reddit.com/";
 
     private static GsonBuilder gson = new GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(Thing.class, new ThingDeserializer());
 
     private static Retrofit.Builder builder = new Retrofit.Builder()
