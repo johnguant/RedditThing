@@ -5,7 +5,7 @@ machine:
     ADB_INSTALL_TIMEOUT: 20 // Nice long install timeout to stop builds from failing
 dependencies:
   pre:
-    - echo y | android update sdk --no-ui --all --filter "tools,android-24,build-tools-24.0.2,platform-tools,extra-android-m2repository"
+    - echo y | android update sdk --no-ui --all --filter "tools,android-24,platform-tools,extra-android-m2repository"
 test:
   override:
     # start the emulator
