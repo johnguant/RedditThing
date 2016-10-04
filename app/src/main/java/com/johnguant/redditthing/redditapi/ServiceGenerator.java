@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
+import com.johnguant.redditthing.BuildConfig;
 import com.johnguant.redditthing.redditapi.model.Thing;
 
 import okhttp3.OkHttpClient;
@@ -23,12 +24,17 @@ public class ServiceGenerator {
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson.create()));
 
-    private static HttpLoggingInterceptor logging = new HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY);
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
-            .addInterceptor(logging)
             .addInterceptor(new HeaderInterceptor());
+
+    static {
+        if(BuildConfig.DEBUG) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor()
+                    .setLevel(HttpLoggingInterceptor.Level.BODY);
+            httpClient.addInterceptor(logging);
+        }
+    }
 
     private static boolean addedAuth = false;
 
