@@ -4,10 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,8 @@ import com.johnguant.redditthing.redditapi.model.Thing;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -32,14 +33,11 @@ import retrofit2.Callback;
  */
 public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private List<Link> mValues;
     private MyPostRecyclerViewAdapter adapter;
-    private SwipeRefreshLayout refreshLayout;
+    @BindView(R.id.list) RecyclerView recyclerView;
+    @BindView(R.id.posts_refresh_layout) SwipeRefreshLayout refreshLayout;
 
 
     /**
@@ -52,10 +50,9 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static PostFragment newInstance(int columnCount) {
+    public static PostFragment newInstance() {
         PostFragment fragment = new PostFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,39 +60,29 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("redditThing", "hello3");
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post_list, container, false);
+        ButterKnife.bind(this, view);
 
-        // Set the adapter
-        Log.d("redditThing", "hello2");
-        //if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            refreshLayout = (SwipeRefreshLayout) view;
-            refreshLayout.setOnRefreshListener(this);
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        Context context = view.getContext();
+        refreshLayout.setOnRefreshListener(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        recyclerView.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                layoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        adapter = new MyPostRecyclerViewAdapter(mValues, mListener, new MyPostRecyclerViewAdapter.LoadMoreListener() {
+            @Override
+            public void loadMore() {
+                loadContent(mValues.get(mValues.size()-1));
             }
-            adapter = new MyPostRecyclerViewAdapter(mValues, mListener, new MyPostRecyclerViewAdapter.LoadMoreListener() {
-                @Override
-                public void loadMore() {
-                    loadContent(mValues.get(mValues.size()-1));
-                }
-            }, context);
-            recyclerView.setAdapter(adapter);
-            loadContent();
-            Log.d("redditThing", "hello1");
-        //}
+        }, context);
+        recyclerView.setAdapter(adapter);
+        loadContent();
         return view;
     }
 
@@ -143,51 +130,9 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
             @Override
             public void onFailure(Call<Listing<Link>> call, Throwable t) {
-                Log.d("redditThing", "it no work");
                 refreshLayout.setRefreshing(false);
             }
         });
-        /*new AsyncTask<Link, Void, Void>(){
-
-            @Override
-            protected Void doInBackground(Link... lastLink) {
-                String url;
-                if(lastPost[0] == null){
-                    url = "https://oauth.reddit.com/";
-                } else {
-                    url = "https://oauth.reddit.com/?after=" + lastPost[0].kind + "_" + lastPost[0].id;
-                }
-
-
-                RedditRequest redditRequest = new RedditRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray posts =  response.getJSONObject("data").getJSONArray("children");
-                            for(int i = 0; i<posts.length(); i++){
-                                Link p = new Link(posts.getJSONObject(i));
-                                mValues.add(p);
-                            }
-                            adapter.notifyDataSetChanged();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        refreshLayout.setRefreshing(false);
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        refreshLayout.setRefreshing(false);
-                    }
-                }, getContext());
-
-                VolleyQueue.getInstance(getActivity()).addToRequestQueue(redditRequest);
-                return null;
-            }
-        }.execute(lastPost);*/
     }
 
     @Override
