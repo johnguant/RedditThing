@@ -30,14 +30,14 @@ import butterknife.ButterKnife;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyPostRecyclerViewAdapter extends RecyclerView.Adapter<MyPostRecyclerViewAdapter.ViewHolder> {
+public class LinkAdapter extends RecyclerView.Adapter<LinkAdapter.ViewHolder> {
 
     private List<Link> mValues;
     private final OnListFragmentInteractionListener mListener;
     LoadMoreListener more;
     private Context mContext;
 
-    public MyPostRecyclerViewAdapter(List<Link> values, OnListFragmentInteractionListener listener, LoadMoreListener more, Context context) {
+    public LinkAdapter(List<Link> values, OnListFragmentInteractionListener listener, LoadMoreListener more, Context context) {
         mListener = listener;
         mValues = values;
         this.more = more;

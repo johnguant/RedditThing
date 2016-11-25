@@ -35,7 +35,7 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private OnListFragmentInteractionListener mListener;
     private List<Link> mValues;
-    private MyPostRecyclerViewAdapter adapter;
+    private LinkAdapter adapter;
     @BindView(R.id.list) RecyclerView recyclerView;
     @BindView(R.id.posts_refresh_layout) SwipeRefreshLayout refreshLayout;
 
@@ -75,7 +75,7 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
-        adapter = new MyPostRecyclerViewAdapter(mValues, mListener, new MyPostRecyclerViewAdapter.LoadMoreListener() {
+        adapter = new LinkAdapter(mValues, mListener, new LinkAdapter.LoadMoreListener() {
             @Override
             public void loadMore() {
                 loadContent(mValues.get(mValues.size()-1));
