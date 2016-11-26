@@ -15,5 +15,5 @@
         android:layout_marginRight="16dp"
         android:scrollbars="vertical"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.johnguant.redditthing.PostFragment" />
+        tools:context="com.johnguant.redditthing.LinkFragment" />
 </android.support.v4.widget.SwipeRefreshLayout>

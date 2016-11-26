@@ -18,7 +18,7 @@ import android.view.MenuItem;
 import com.johnguant.redditthing.redditapi.model.Link;
 
 public class RedditThing extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks, PostFragment.OnListFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks, LinkFragment.OnListFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

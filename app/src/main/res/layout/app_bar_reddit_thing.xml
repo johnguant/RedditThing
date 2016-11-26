@@ -21,7 +21,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <fragment android:name="com.johnguant.redditthing.PostFragment"
+    <fragment android:name="com.johnguant.redditthing.LinkFragment"
         android:id="@+id/post_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

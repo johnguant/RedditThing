@@ -31,7 +31,7 @@ import retrofit2.Callback;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class LinkFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private OnListFragmentInteractionListener mListener;
     private List<Link> mValues;
@@ -44,14 +44,14 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public PostFragment() {
+    public LinkFragment() {
         mValues = new ArrayList<>();
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static PostFragment newInstance() {
-        PostFragment fragment = new PostFragment();
+    public static LinkFragment newInstance() {
+        LinkFragment fragment = new LinkFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;

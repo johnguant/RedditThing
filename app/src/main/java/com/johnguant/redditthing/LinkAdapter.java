@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.johnguant.redditthing.PostFragment.OnListFragmentInteractionListener;
+import com.johnguant.redditthing.LinkFragment.OnListFragmentInteractionListener;
 import com.johnguant.redditthing.redditapi.model.Link;
 import com.squareup.picasso.Picasso;
 
@@ -85,14 +85,11 @@ public class LinkAdapter extends RecyclerView.Adapter<LinkAdapter.ViewHolder> {
 
         holder.mRow2.setText(row2Builder, TextView.BufferType.SPANNABLE);
 
-        if(link.getThumbnail().equals("self") || link.getThumbnail().equals("default") || link.getThumbnail().equals("nsfw")) {
-            holder.mThumbnailView.setVisibility(View.GONE);
-        } else if(link.getThumbnail().equals("image")) {
-            Picasso.with(mContext).load(link.getMedia().getOembed().getThumbnailUrl()).resizeDimen(R.dimen.thumbnail_size, R.dimen.thumbnail_size).centerCrop().into(holder.mThumbnailView);
-            holder.mThumbnailView.setVisibility(View.VISIBLE);
-        } else {
+        if(link.getThumbnail().contains("thumbs.redditmedia.com")) {
             Picasso.with(mContext).load(link.getThumbnail()).resizeDimen(R.dimen.thumbnail_size, R.dimen.thumbnail_size).centerCrop().into(holder.mThumbnailView);
             holder.mThumbnailView.setVisibility(View.VISIBLE);
+        } else {
+            holder.mThumbnailView.setVisibility(View.GONE);
         }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
