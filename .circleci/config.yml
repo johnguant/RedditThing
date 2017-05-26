@@ -8,6 +8,7 @@ jobs:
       - checkout
       - restore_cache:
           key: thing4reddit-cache-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+      - run: echo $KEYSTORE_PROPERTIES | base64 -w0 -d > keystore.properties;
       - run: ./gradlew check
       - store_artifacts:
           path: app/build/output
@@ -18,7 +19,6 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               echo $KEYSTORE | base64 -w0 -d > app/release.keystore;
-              echo $KEYSTORE_PROPERTIES | base64 -w0 -d > keystore.properties;
               echo $PLAY_KEYFILE > app/keys.json;
               ./gradlew clean publishApkRelease
             fi
