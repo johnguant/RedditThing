@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    working_directory: /home/rhys/thing4reddit
+    docker:
+      - image: johnguant/android:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: thing4reddit-cache-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+      - run: ./gradlew check
+      - store_artifacts:
+          path: app/build/output
+          destination: testoutput
+      - store_test_results:
+          path: app/build/test-results
+      - deploy:
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              echo $KEYSTORE | base64 -w0 -d > release.keystore;
+              echo $PLAY_KEYFILE > app/keys.json;
+              ./gradlew clean publishApkRelease -Pandroid.injected.signing.store.file=release.keystore -Pandroid.injected.signing.store.password=$KEYSTORE_PASS -Pandroid.injected.signing.key.alias=$ALIAS_NAME -Pandroid.injected.signing.key.password=$ALIAS_PASS;
+            fi
+      - store_artifacts:
+          path: app/build/output
+          destination: releaseoutput
+      - save_cache:
+          key: thing4reddit-cache-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          paths:
+            - ~/.gradle/caches/
