@@ -17,7 +17,8 @@ jobs:
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              echo $KEYSTORE | base64 -w0 -d > release.keystore;
+              echo $KEYSTORE | base64 -w0 -d > app/release.keystore;
+              echo $KEYSTORE_PROPERTIES | base64 -w0 -d > keystore.properties;
               echo $PLAY_KEYFILE > app/keys.json;
               ./gradlew clean publishApkRelease
             fi
