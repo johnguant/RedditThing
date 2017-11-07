@@ -6,6 +6,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParseException
 import com.johnguant.redditthing.redditapi.model.Link
+import com.johnguant.redditthing.redditapi.model.Subreddit
 import com.johnguant.redditthing.redditapi.model.Thing
 
 import java.lang.reflect.Type
@@ -18,6 +19,10 @@ class ThingDeserializer : JsonDeserializer<Thing<*>> {
             "t3" -> {
                 val link = context.deserialize<Link>(jObject.getAsJsonObject("data"), Link::class.java)
                 return Thing(jObject.getAsJsonPrimitive("kind").asString, link)
+            }
+            "t5" -> {
+                val subreddit = context.deserialize<Subreddit>(jObject.getAsJsonObject("data"), Subreddit::class.java)
+                return Thing(jObject.getAsJsonPrimitive("kind").asString, subreddit)
             }
         }
         return null

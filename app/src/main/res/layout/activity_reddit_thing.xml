@@ -19,7 +19,13 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_reddit_thing"
-        app:menu="@menu/activity_reddit_thing_drawer" />
+        app:headerLayout="@layout/nav_header_reddit_thing">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/navigationmenu"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="96dp"/>
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

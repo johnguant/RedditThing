@@ -19,7 +19,7 @@ class RedditAuthenticator(private val context: Context) : AbstractAccountAuthent
     }
 
     @Throws(NetworkErrorException::class)
-    override fun addAccount(response: AccountAuthenticatorResponse, accountType: String, authTokenType: String, requiredFeatures: Array<String>, options: Bundle): Bundle {
+    override fun addAccount(response: AccountAuthenticatorResponse, accountType: String, authTokenType: String?, requiredFeatures: Array<String>?, options: Bundle?): Bundle? {
         val intent = Intent(this.context, RedditAuthActivity::class.java)
         intent.putExtra(RedditAuthActivity.ARG_ACCOUNT_TYPE, accountType)
         intent.putExtra(RedditAuthActivity.ARG_AUTH_TYPE, authTokenType)

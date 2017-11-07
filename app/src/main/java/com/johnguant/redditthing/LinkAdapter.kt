@@ -25,7 +25,7 @@ import java.util.*
  * specified [OnListFragmentInteractionListener].
  * TODO: Replace the implementation with code for your data type.
  */
-class LinkAdapter(private val mValues: List<Link>, private val mListener: OnListFragmentInteractionListener?, internal var more: () -> Unit, private val mContext: Context) : RecyclerView.Adapter<LinkAdapter.ViewHolder>() {
+class LinkAdapter(private val mValues: List<Link>, private val mListener: OnListFragmentInteractionListener, internal var more: () -> Unit, private val mContext: Context) : RecyclerView.Adapter<LinkAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -74,7 +74,7 @@ class LinkAdapter(private val mValues: List<Link>, private val mListener: OnList
             holder.itemView.preview.visibility = View.GONE
         }
         holder.mView.setOnClickListener {
-            mListener?.onListFragmentInteraction(holder.mItem)
+            mListener.onListFragmentInteraction(holder.mItem)
         }
     }
 

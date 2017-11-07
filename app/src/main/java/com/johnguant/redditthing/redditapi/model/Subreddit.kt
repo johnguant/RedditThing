@@ -6,7 +6,7 @@ class Subreddit {
      val commentScoreHideMins: Int = 0
      val description: String? = null
      val descriptionHtml: String? = null
-     val displayName: String? = null
+     val displayName: String = ""
      val headerImg: String? = null
      val headerSize: Array<Any>? = null
      val headerTitle: String? = null

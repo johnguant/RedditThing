@@ -26,7 +26,7 @@ class RedditAuthManager internal constructor(private val context: Context) {
         @Synchronized get() {
             val am = AccountManager.get(context)
             val accounts = am.getAccountsByType("com.johnguant.redditthing")
-            if (accounts.size > 0) {
+            if (accounts.isNotEmpty()) {
                 val accountFuture = am.getAuthToken(accounts[0], "accessToken", null, false, null, null)
                 try {
                     val authTokenBundle = accountFuture.result
@@ -58,7 +58,7 @@ class RedditAuthManager internal constructor(private val context: Context) {
     val appOAuth: String?
         get() {
             val authPref = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
-            var token: String = authPref.getString("accessToken", null)
+            var token: String = authPref.getString("accessToken", "")
             if (!TextUtils.isEmpty(token)) {
                 val expiry = authPref.getLong("expiryTime", 0)
                 if (System.currentTimeMillis() < expiry) {
@@ -77,7 +77,7 @@ class RedditAuthManager internal constructor(private val context: Context) {
             val newToken: OAuthToken
             try {
                 val response = call.execute()
-                newToken = response.body()
+                newToken = response.body()!!
             } catch (e: IOException) {
                 return null
             }
@@ -95,7 +95,7 @@ class RedditAuthManager internal constructor(private val context: Context) {
         val call = service.refreshAccessToken("refresh_token", refreshToken)
         val token: OAuthToken
         try {
-            token = call.execute().body()
+            token = call.execute().body()!!
         } catch (e: IOException) {
             return null
         }

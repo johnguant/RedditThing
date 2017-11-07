@@ -30,7 +30,7 @@ class OAuthAuthenticator(private val mContext: Context) : Authenticator {
         var result = 1
 
         while (response.priorResponse() != null) {
-            response = response.priorResponse()
+            response = response.priorResponse()!!
             result++
         }
         return result

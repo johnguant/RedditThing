@@ -27,18 +27,13 @@ import retrofit2.Callback
  */
 class LinkFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
-    private var mListener: OnListFragmentInteractionListener? = null
+    private lateinit var mListener: OnListFragmentInteractionListener
     private val mValues: MutableList<Link> = mutableListOf()
     private var adapter: LinkAdapter? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_post_list, container, false)
-        return view
+        return inflater.inflate(R.layout.fragment_post_list, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -46,12 +41,16 @@ class LinkFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
         val context = context
         posts_refresh_layout.setOnRefreshListener(this)
+        posts_refresh_layout.setColorSchemeResources(
+                R.color.colorPrimary,
+                R.color.colorAccent
+        )
         val layoutManager = LinearLayoutManager(context)
         list.layoutManager = layoutManager
         val dividerItemDecoration = DividerItemDecoration(list.context,
                 layoutManager.orientation)
         list.addItemDecoration(dividerItemDecoration)
-        adapter = LinkAdapter(mValues, mListener, {loadContent(mValues[mValues.size - 1])}, context)
+        adapter = LinkAdapter(mValues, mListener, {loadContent(mValues[mValues.size - 1])}, context!!)
         list.adapter = adapter
         loadContent()
     }
@@ -59,40 +58,39 @@ class LinkFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (context is OnListFragmentInteractionListener) {
-            mListener = context as OnListFragmentInteractionListener?
+            mListener = context
         } else {
             throw RuntimeException(context!!.toString() + " must implement OnListFragmentInteractionListener")
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        mListener = null
-    }
-
-    fun loadContent() {
+    private fun loadContent() {
         mValues.clear()
         loadContent(null)
     }
 
-    fun loadContent(lastPost: Link?) {
+    private fun loadContent(lastPost: Link?) {
         posts_refresh_layout.isRefreshing = true
-        val service = ServiceGenerator.createService(RedditApiService::class.java, context)
-        val call = service.loadFrontpage(lastPost)
+        val service = ServiceGenerator.createService(RedditApiService::class.java, this.context!!)
+        val call:Call<Listing<Link>>
+        call = if(arguments!!.getString("subreddit") == "")
+            service.loadFrontpage(lastPost)
+        else
+            service.loadSubreddit(arguments!!.getString("subreddit"), lastPost)
         call.enqueue(object : Callback<Listing<Link>> {
             override fun onResponse(call: Call<Listing<Link>>, response: retrofit2.Response<Listing<Link>>) {
                 if (response.isSuccessful) {
                     if (lastPost == null) {
                         mValues.clear()
                     }
-                    response.body().data!!.children!!.mapTo(mValues) { it.data }
+                    response.body()!!.data!!.children!!.mapTo(mValues) { it.data }
                     adapter!!.notifyDataSetChanged()
                 }
-                posts_refresh_layout.isRefreshing = false
+                posts_refresh_layout?.isRefreshing = false
             }
 
             override fun onFailure(call: Call<Listing<Link>>, t: Throwable) {
-                posts_refresh_layout.isRefreshing = false
+                posts_refresh_layout?.isRefreshing = false
             }
         })
     }
@@ -116,11 +114,10 @@ class LinkFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     companion object {
-
-        // TODO: Customize parameter initialization
-        fun newInstance(): LinkFragment {
+        fun newInstance(subreddit: String): LinkFragment {
             val fragment = LinkFragment()
             val args = Bundle()
+            args.putString("subreddit", subreddit)
             fragment.arguments = args
             return fragment
         }
