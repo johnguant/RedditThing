@@ -1,7 +1,9 @@
 package com.johnguant.redditthing
 
+import android.arch.paging.PagedListAdapter
 import android.content.Context
 import android.graphics.Typeface
+import android.support.v7.recyclerview.extensions.DiffCallback
 import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableString
@@ -15,8 +17,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.johnguant.redditthing.LinkFragment.OnListFragmentInteractionListener
 import com.johnguant.redditthing.redditapi.model.Link
+import com.johnguant.redditthing.redditapi.model.Thing
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_post.view.*
+import net.dean.jraw.models.Submission
 import java.util.*
 
 
@@ -25,7 +29,15 @@ import java.util.*
  * specified [OnListFragmentInteractionListener].
  * TODO: Replace the implementation with code for your data type.
  */
-class LinkAdapter(private val mValues: List<Link>, private val mListener: OnListFragmentInteractionListener, internal var more: () -> Unit, private val mContext: Context) : RecyclerView.Adapter<LinkAdapter.ViewHolder>() {
+class LinkAdapter(private val mValues: List<Link>, private val mListener: OnListFragmentInteractionListener, internal var more: () -> Unit, private val mContext: Context) : PagedListAdapter<Submission, LinkAdapter.ViewHolder>(object: DiffCallback<Submission>() {
+    override fun areItemsTheSame(oldLink: Submission, newLink: Submission): Boolean {
+        return oldLink.id == newLink.id
+    }
+
+    override fun areContentsTheSame(oldLink: Submission, newLink: Submission): Boolean{
+        return oldLink == newLink
+    }
+}) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
